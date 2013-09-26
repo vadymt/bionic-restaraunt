@@ -1,0 +1,99 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets">
+
+<h:head></h:head>
+<body>
+	<ui:composition template="/template/common/commonLayout.xhtml">
+
+
+		<ui:define name="content">
+			<center>
+
+				<rich:panel style="width:400px">
+					<center>
+						<f:facet name="header">
+							<h:outputText value="New dish" styleClass="header"></h:outputText>
+						</f:facet>
+						<h:form>
+							<rich:messages ajaxRendered="true" />
+							<h:messages errorClass="errorMessage" infoClass="infoMessage"
+								warnClass="warnMessage"></h:messages>
+							<h:panelGrid columns="2">
+								<h:outputText value="Name :"></h:outputText>
+								<h:inputText id="name" value="#{menuEditorBean.menu.name}"
+									required="true" requiredMessage="Please Enter Dish name!"></h:inputText>
+
+								<h:outputText value="Cost :"></h:outputText>
+								<h:inputText id="cost" value="#{menuEditorBean.menu.cost}"
+									required="true" requiredMessage="Please Enter Price!"
+									pattern="[0-9]{2,}"></h:inputText>
+
+								<h:outputText value="Description :"></h:outputText>
+								<h:inputText id="description"
+									value="#{menuEditorBean.menu.description}" required="true"
+									requiredMessage="Add short description!"
+									styleClass="text-input"></h:inputText>
+								<a4j:commandButton type="submit" value="Add new dish to menu"
+									action="#{menuEditorBean.addPosition}" styleClass="c2"></a4j:commandButton>
+								<h:commandButton type="reset" value="Reset" styleClass="c2"></h:commandButton>
+							</h:panelGrid>
+						</h:form>
+					</center>
+				</rich:panel>
+				<rich:panel style="width:400px">
+					<center>
+						<f:facet name="header">
+							<h:outputText value="Edit dish info" styleClass="header"></h:outputText>
+						</f:facet>
+						<h:form>
+							<rich:messages ajaxRendered="true" />
+							<h:messages errorClass="errorMessage" infoClass="infoMessage"
+								warnClass="warnMessage"></h:messages>
+							<h:panelGrid columns="2">
+								<h:outputText value="Name :"></h:outputText>
+								<h:selectOneMenu id="selectName"
+									value="#{menuEditorBean.selectedMenu}"
+									valueChangeListener="#{menuEditorBean.valueChanged}"
+									converter="#{menuConverterBean}">
+									<f:selectItems value="#{menuEditorBean.selectItems}" var="user"
+										itemValue="#{user}" itemLabel="#{user.name}" />
+									<!-- 									<f:converter converterId="menuConverter" /> -->
+									<a4j:ajax event="valueChange"
+										render="editName, editCost, editDescription" />
+								</h:selectOneMenu>
+								<!-- 								<h:panelGrid id="second"> -->
+								<h:outputText value="New Name :"></h:outputText>
+								<h:inputText id="editName"
+									value="#{menuEditorBean.selectedMenu.name}" required="true"
+									requiredMessage="Please Enter Dish name!"></h:inputText>
+
+								<h:outputText value="Cost :"></h:outputText>
+								<h:inputText id="editCost"
+									value="#{menuEditorBean.selectedMenu.cost}" required="true"
+									requiredMessage="Please Enter Price!" pattern="[0-9]{2,}"></h:inputText>
+
+								<h:outputText value="Description :"></h:outputText>
+								<h:inputText id="editDescription"
+									value="#{menuEditorBean.selectedMenu.description}"
+									required="true" requiredMessage="Add short description!"
+									styleClass="text-input"></h:inputText>
+								<a4j:commandButton type="submit" value="Submit updates"
+									action="#{menuEditorBean.editPosition}" styleClass="c2"></a4j:commandButton>
+								<h:commandButton type="reset" value="Reset" styleClass="c2"></h:commandButton>
+								<h:commandButton type="submit" value="Delete" styleClass="c2"
+									action="#{menuEditorBean.removePosition}"></h:commandButton>
+								<!-- 								</h:panelGrid> -->
+							</h:panelGrid>
+						</h:form>
+					</center>
+				</rich:panel>
+			</center>
+		</ui:define>
+	</ui:composition>
+</body>
+</html>

@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<persistence version="2.0"
+	xmlns="http://java.sun.com/xml/ns/persistence" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://java.sun.com/xml/ns/persistence
+http://java.sun.com/xml/ns/persistence/persistence_2_0.xsd">
+	<persistence-unit name="Restaurant" transaction-type="JTA">
+		<provider>org.hibernate.ejb.HibernatePersistence</provider>
+		<jta-data-source>java:jboss/datasources/restarauntDS</jta-data-source>
+		<class>edu.bionic.model.Request</class>
+		<class>edu.bionic.model.Client</class>
+		<class>edu.bionic.model.User</class>
+		<class>edu.bionic.model.Role</class>
+		<class>edu.bionic.model.Tables</class>
+		<class>edu.bionic.model.Menu</class>
+		<class>edu.bionic.model.Menu_Request</class>
+		<properties>
+			<property name="hibernate.hbm2ddl.auto" value="update" />
+			<property name="hibernate.dialect" value="org.hibernate.dialect.MySQL5InnoDBDialect" />
+		</properties>
+	</persistence-unit>
+</persistence>
+

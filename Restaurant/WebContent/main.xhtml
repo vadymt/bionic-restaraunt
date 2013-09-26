@@ -1,0 +1,95 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:c="http://java.sun.com/jsp/jstl/core"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:f="http://java.sun.com/jsf/core"
+	template="template/common/commonLayout.xhtml">
+
+	<ui:define name="content">
+		<h:outputText
+			value="#{texts.enjoythis}, #{securityUtilities.user.client.name}"
+			rendered="#{not empty securityUtilities.user and not empty securityUtilities.user.client }" />
+		<a4j:status onstart="#{rich:component('statPane')}.show()"
+			onstop="#{rich:component('statPane')}.hide()" />
+		<rich:panel>
+			<h:messages style="color:black;margin:8px;" />
+			<h:form>
+				<rich:dataScroller for="menu"></rich:dataScroller>
+				<rich:dataTable id="menu" value="#{menuBean}" var="item"
+					rows="#{shoppingCartBean.numberOfRows}" iterationStatusVar="it"
+					render="ds" columnClasses="center">
+					<rich:column sortable="true" sortby="#{item.name}" style="font-weight:bold;">
+						<f:facet styleclass="header" name="header">
+							<a4j:commandLink value="#{texts.product}" render="menu"
+								actionListener="#{menuBean.changeSortOrder()}">
+								<f:setPropertyActionListener target="#{menuBean.columnName}"
+									value="name" />
+							</a4j:commandLink>
+						</f:facet>
+						<h:outputText value="#{item.name}"></h:outputText>
+					</rich:column>
+					<rich:column sortable="true" sortby="#{item.cost}" style="color:#580000;font-weight:bold;">
+						<f:facet styleclass="header" name="header">
+							<a4j:commandLink value="#{texts.price}" render="menu"
+								actionListener="#{menuBean.changeSortOrder()}">
+								<f:setPropertyActionListener target="#{menuBean.columnName}"
+									value="cost" />
+							</a4j:commandLink>
+						</f:facet>
+						<h:outputText value="#{item.cost}"></h:outputText>
+					</rich:column>
+					<rich:column sortable="true" sortby="#{item.description}">
+						<f:facet styleclass="header" name="header">
+							<a4j:commandLink value="#{texts.description}" render="menu"
+								actionListener="#{menuBean.changeSortOrder()}">
+								<f:setPropertyActionListener target="#{menuBean.columnName}"
+									value="description" />
+							</a4j:commandLink>
+						</f:facet>
+						<h:outputText value="#{item.description}"></h:outputText>
+					</rich:column>
+					<rich:column rendered="#{not empty securityUtilities.user}">
+						<f:facet styleclass="header" name="header">
+							<h:outputText value="#{add}"></h:outputText>
+						</f:facet>
+
+						<a4j:commandButton id="addaproduct" value="#{texts.add}" execute="@this"
+							render="@none"
+							oncomplete="#{rich:component('confirmPane')}.show()">
+							<f:setPropertyActionListener target="#{shoppingCartBean.menu}"
+								value="#{item}" />
+
+						</a4j:commandButton>
+					</rich:column>
+				</rich:dataTable>
+			</h:form>
+			<rich:popupPanel id="statPane" autosized="true">
+					
+            Please wait...
+        </rich:popupPanel>
+			<rich:popupPanel id="confirmPane" autosized="true">
+            How much of this do you want?
+            <h:form>
+					<rich:inputNumberSpinner minBalue="1" maxValue="100"
+						value="#{shoppingCartBean.currentcount}"
+						valueChangeListener="#{shoppingCartBean.currentCountListener}">
+					</rich:inputNumberSpinner>
+					<h:commandButton value="Cancel"
+						onclick="#{rich:component('confirmPane')}.hide(); return false;" />
+					<h:commandButton value="Buy"
+						action="#{shoppingCartBean.addProduct()}" />
+				</h:form>
+			</rich:popupPanel>
+			<a4j:jsFunction name="addProduct"
+				action="#{shoppingCartBean.addProduct()}" render="menu"
+				execute="@this"
+				oncomplete="#{rich:component('confirmPane')}.hide();" />
+		</rich:panel>
+	</ui:define>
+</ui:composition>
+
+

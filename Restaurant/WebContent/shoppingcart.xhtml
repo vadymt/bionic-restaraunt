@@ -1,0 +1,107 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets">
+
+<h:head></h:head>
+<body>
+
+	<ui:composition template="/template/common/commonLayout.xhtml">
+
+		<ui:define name="content">
+			<a4j:status onstart="#{rich:component('statPane')}.show()"
+				onstop="#{rich:component('statPane')}.hide()" />
+			<h:form>
+				<h:panelGroup>
+					<h:outputText value="Hello #{user.login}" />
+
+					<rich:dataScroller for="request"></rich:dataScroller>
+					<rich:dataTable id="request"
+						value="#{shoppingCartBean.request.menu_request}" var="item"
+						rows="10" iterationStatusVar="it">
+						
+						<rich:column sortable="true" sortby="#{item.menu.name}">
+							<f:facet styleclass="header" name="header">
+								<h:outputText value="Product"></h:outputText>
+							</f:facet>
+							<h:outputText value="#{item.menu.name}"></h:outputText>
+						</rich:column>
+						<rich:column sortable="true" sortby="#{item.count}">
+							<f:facet styleclass="header" name="header">
+								<h:outputText value="Counte"></h:outputText>
+							</f:facet>
+							<h:outputText value="#{item.count}"></h:outputText>
+						</rich:column>
+						<rich:column sortable="false">
+							<f:facet styleclass="header" name="header">
+								<h:outputText value="Cost"></h:outputText>
+							</f:facet>
+							<h:outputText value="#{item.menu.cost*item.count}"></h:outputText>
+						</rich:column>
+						<rich:column sortable="false">
+							<a4j:commandLink id="removeproduct" value="Remove"
+								execute="@this"
+								oncomplete="#{rich:component('confirmPane')}.show()">
+								<f:setPropertyActionListener target="#{shoppingCartBean.id}"
+									value="#{item.menu.id}" />
+							</a4j:commandLink>
+						</rich:column>
+					</rich:dataTable>
+					<rich:popupPanel id="confirmPane" autosized="true">
+            Are you sure you want to delete this dish?
+            <a4j:commandButton value="Cancel"
+							onclick="#{rich:component('confirmPane')}.hide(); return false;" />
+						<a4j:commandButton value="Remove"
+							onclick="remove(); return false;" />
+					</rich:popupPanel>
+					<h:panelGrid columns="2" rendered="#{shoppingCartBean.request.price > 0}">
+					<h:outputText value="Total price:" />
+					<h:outputText id="priceOutput" value="#{shoppingCartBean.request.price}" />
+					</h:panelGrid>
+					<h:panelGrid >
+						<a4j:jsFunction name="remove"
+							action="#{shoppingCartBean.removeProduct}" render="request, priceOutput"
+							execute="@this"
+							oncomplete="#{rich:component('confirmPane')}.hide();" />
+						<a4j:commandButton id="submitreq" value="Submit" execute="@this"
+							render="@none" action="#{shoppingCartBean.submitRequest()}"
+							oncomplete="#{rich:component('submitPane')}.show()"
+							rendered="#{shoppingCartBean.request.price > 0}">
+						</a4j:commandButton>
+						<a4j:commandButton id="clearcard" value="Clear the cart"
+							execute="@this" render="@none"
+							action="#{shoppingCartBean.clearRequest()}"
+							oncomplete="#{rich:component('clearPane')}.show()"
+							rendered="#{shoppingCartBean.request.price > 0}"
+							>
+						</a4j:commandButton>
+						<h:graphicImage value="/resources/images/Shoppingcart.gif"
+							styleClass="commom-style" align="left" />
+
+					</h:panelGrid>
+					
+					<rich:popupPanel id="statPane" autosized="true">					
+            Please wait...
+        </rich:popupPanel>
+					<rich:popupPanel id="submitPane" autosized="true">
+            Your request has been submitted! Thank you!
+            <h:form>
+							<a href="main.xhtml"> Proceed </a>
+						</h:form>
+					</rich:popupPanel>
+					<rich:popupPanel id="clearPane" autosized="true">
+            Your shopping cart has been cleared! Thank you!
+            <h:form>
+							<a href="main.xhtml"> Proceed</a>
+						</h:form>
+					</rich:popupPanel>
+				</h:panelGroup>
+			</h:form>
+		</ui:define>
+	</ui:composition>
+</body>
+</html>
